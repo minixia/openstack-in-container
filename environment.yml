@@ -1,0 +1,48 @@
+version: '3'
+services:
+  db:
+    image: "mariadb:10.1"
+    env_file: "/root/configs/envvars"
+  memcached:
+    image: "memcached"
+    ports:
+      - "11211" 
+  rabbitmq:
+    image: "rabbitmq"
+    env_file: "/root/configs/envvars"
+    ports:
+      - "4369:4369/tcp"
+      - "5671-5672:5671-5672/tcp"
+      - "25672/tcp"
+  libvirt-logd:
+    image: "nova-libvirt"
+    privileged: True
+    pid: "host"
+    network_mode: "host"
+    entrypoint: "virtlogd"
+    volumes:
+      - "/lib/modules:/lib/modules:ro"
+      - "/run/:/run/:shared"
+      - "/dev:/dev"
+      - "/sys/fs/cgroup:/sys/fs/cgroup"
+      - "/etc/machine-id:/etc/machine-id:ro"
+      - "/var/lib/libvirt:/var/lib/libvirt"
+      - "/var/lib/nova/:/var/lib/nova/"
+      - "/var/run/libvirt/:/var/run/libvirt/:shared"
+      - "/etc/libvirt/qemu:/etc/libvirt/qemu"
+  libvirt-lockd:
+    image: "nova-libvirt"
+    privileged: True
+    pid: "host"
+    network_mode: "host"
+    entrypoint: "virtlockd"
+    volumes:
+      - "/lib/modules:/lib/modules:ro"
+      - "/run/:/run/:shared"
+      - "/dev:/dev"
+      - "/sys/fs/cgroup:/sys/fs/cgroup"
+      - "/etc/machine-id:/etc/machine-id:ro"
+      - "/var/lib/libvirt:/var/lib/libvirt"
+      - "/var/lib/nova/:/var/lib/nova/"
+      - "/var/run/libvirt/:/var/run/libvirt/:shared"
+      - "/etc/libvirt/qemu:/etc/libvirt/qemu"

@@ -1,0 +1,36 @@
+version: '3'
+services:
+  keystone-init:
+    image: "keystone"
+    env_file: "/root/configs/envvars"
+    entrypoint: "/init.sh"
+    volumes:
+      - "/root/configs/keystone/keystone.conf:/etc/keystone/keystone.conf"
+      - "/root/configs/keystone/fernet_keys:/etc/keystone/fernet-keys"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+  glance-init:
+    image: "glance-api"
+    env_file: "/root/configs/envvars"
+    entrypoint: "/init.sh"
+    volumes:
+      - "/root/configs/glance/glance.conf:/etc/glance/glance.conf"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+  nova-init:
+    image: "nova-api"
+    env_file: "/root/configs/envvars"
+    entrypoint: "/init.sh"
+    volumes:
+      - "/root/configs/nova/nova.conf:/etc/nova/nova.conf"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+  neutron-init:
+    image: "neutron-server"
+    env_file: "/root/configs/envvars"
+    entrypoint: "/init.sh"
+    volumes:
+      - "/root/configs/neutron/neutron.conf:/etc/neutron/neutron.conf"
+      - "/root/configs/neutron/ml2_conf.ini:/etc/neutron/plugins/ml2/ml2_conf.ini"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"

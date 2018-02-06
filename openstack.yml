@@ -1,0 +1,118 @@
+version: '3'
+services:
+  openstack-client:
+    image: "openstack-base"
+    env_file: "/root/configs/envvars"
+    entrypoint: "/bin/bash"
+    volumes:
+      - "/root/configs/admin-openrc:/tmp/admin-openrc"
+      - "/opt/files:/opt/files"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+  keystone:
+    image: "keystone"
+    env_file: "/root/configs/envvars"
+    volumes:
+      - "/root/configs/keystone/keystone.conf:/etc/keystone/keystone.conf"
+      - "/root/configs/keystone/fernet_keys:/etc/keystone/fernet-keys"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+    ports:
+      - "5000:5000/tcp"
+      - "35357:35357/tcp"
+  glance-api:
+    image: "glance-api"
+    env_file: "/root/configs/envvars"
+    volumes:
+      - "/root/configs/glance/glance.conf:/etc/glance/glance.conf"
+      - "/var/log:/var/log"
+      - "/var/lib/glance/images:/var/lib/glance/images"
+      - "/etc/localtime:/etc/localtime:ro"
+    ports:
+      - "9292:9292/tcp"
+  glance-registry:
+    image: "glance-registry"
+    env_file: "/root/configs/envvars"
+    volumes:
+      - "/root/configs/glance/glance-registry.conf:/etc/glance/glance-registry.conf"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+  nova-api:
+    image: "nova-api"
+    env_file: "/root/configs/envvars"
+    volumes:
+      - "/root/configs/nova/nova.conf:/etc/nova/nova.conf"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+  nova-conductor:
+    image: "nova-conductor"
+    env_file: "/root/configs/envvars"
+    volumes:
+      - "/root/configs/nova/nova.conf:/etc/nova/nova.conf"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+  nova-scheduler:
+    image: "nova-scheduler"
+    env_file: "/root/configs/envvars"
+    volumes:
+      - "/root/configs/nova/nova.conf:/etc/nova/nova.conf"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+  nova-placement-api:
+    image: "nova-placement-api"
+    env_file: "/root/configs/envvars"
+    volumes:
+      - "/root/configs/nova/nova.conf:/etc/nova/nova.conf"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+    ports:
+      - "8778:8778/tcp"
+  neutron-server:
+    image: "neutron-server"
+    env_file: "/root/configs/envvars"
+    volumes:
+      - "/root/configs/neutron/neutron.conf:/etc/neutron/neutron.conf"
+      - "/root/configs/neutron/ml2_conf.ini:/etc/neutron/plugins/ml2/ml2_conf.ini"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+    ports:
+      - "9696:9696/tcp"
+  neutron-dhcp-agent:
+    image: "neutron-dhcp-agent"
+    env_file: "/root/configs/envvars"
+    privileged: True
+    network_mode: "host"
+    volumes:
+      - "/root/configs/neutron/neutron.conf:/etc/neutron/neutron.conf"
+      - "/root/configs/neutron/ml2_conf.ini:/etc/neutron/plugins/ml2/ml2_conf.ini"
+      - "/root/configs/neutron/dhcp_agent.ini:/etc/neutron/dhcp_agent.ini"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/lib/modules:/lib/modules:ro"
+      - "/run:/run:shared"
+  neutron-metadata-agent:
+    image: "neutron-metadata-agent"
+    env_file: "/root/configs/envvars"
+    privileged: True
+    network_mode: "host"
+    volumes:
+      - "/root/configs/neutron/neutron.conf:/etc/neutron/neutron.conf"
+      - "/root/configs/neutron/ml2_conf.ini:/etc/neutron/plugins/ml2/ml2_conf.ini"
+      - "/root/configs/neutron/metadata_agent.ini:/etc/neutron/metadata_agent.ini"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/lib/modules:/lib/modules:ro"
+      - "/run:/run:shared"
+  neutron-l3-agent:
+    image: "neutron-l3-agent"
+    env_file: "/root/configs/envvars"
+    privileged: True
+    network_mode: "host"
+    volumes:
+      - "/root/configs/neutron/neutron.conf:/etc/neutron/neutron.conf"
+      - "/root/configs/neutron/ml2_conf.ini:/etc/neutron/plugins/ml2/ml2_conf.ini"
+      - "/root/configs/neutron/l3_agent.ini:/etc/neutron/l3_agent.ini"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/lib/modules:/lib/modules:ro"
+      - "/run:/run:shared"

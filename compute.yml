@@ -1,0 +1,48 @@
+version: '3'
+services:
+  nova-libvirt:
+    image: "nova-libvirt"
+    privileged: True
+    network_mode: "host"
+    pid: "host"
+    entrypoint: "libvirtd -v"
+    volumes:
+      - "/root/configs/nova-compute/qemu.conf:/etc/libvirt/qemu.conf"
+      - "/lib/modules:/lib/modules:ro"
+      - "/run/:/run/:shared"
+      - "/dev:/dev"
+      - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
+      - "/etc/machine-id:/etc/machine-id:ro"
+      - "/var/lib/libvirt:/var/lib/libvirt"
+      - "/var/lib/nova/:/var/lib/nova/"
+      - "/var/run/libvirt/:/var/run/libvirt/"
+      - "/etc/libvirt/qemu:/etc/libvirt/qemu"
+  nova-compute:
+    image: "nova-compute"
+    privileged: True
+    ipc: "host"
+    network_mode: "host"
+    volumes:
+      - "/root/configs/nova-compute/nova.conf:/etc/nova/nova.conf"
+      - "/root/configs/nova-compute/nova-compute.conf:/etc/nova/nova-compute.conf"
+      - "/lib/modules:/lib/modules:ro"
+      - "/run/:/run/:shared"
+      - "/dev:/dev"
+      - "/sys/fs/cgroup:/sys/fs/cgroup"
+      - "/etc/machine-id:/etc/machine-id:ro"
+      - "/var/lib/libvirt:/var/lib/libvirt"
+      - "/var/run/libvirt/:/var/run/libvirt/:shared"
+      - "/var/lib/nova:/var/lib/nova/"
+  neutron-linuxbridge-agent:
+    image: "neutron-linuxbridge-agent"
+    env_file: "/root/configs/envvars"
+    privileged: True
+    network_mode: "host"
+    volumes:
+      - "/root/configs/neutron/neutron.conf:/etc/neutron/neutron.conf"
+      - "/root/configs/neutron/ml2_conf.ini:/etc/neutron/plugins/ml2/ml2_conf.ini"
+      - "/root/configs/neutron/linuxbridge_agent.ini:/etc/neutron/plugins/ml2/linuxbridge_agent.ini"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/lib/modules:/lib/modules:ro"
+      - "/run:/run:shared"

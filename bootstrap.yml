@@ -1,0 +1,46 @@
+version: '3'
+services:
+  keystone-bootstrap:
+    image: "keystone"
+    env_file: "/root/configs/envvars"
+    entrypoint: "/bootstrap.sh"
+    volumes:
+      - "/root/configs/keystone/keystone.conf:/etc/keystone/keystone.conf"
+      - "/root/configs/keystone/fernet_keys:/etc/keystone/fernet-keys"
+      - "/root/configs/admin-openrc:/tmp/admin-openrc"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+  glance-bootstrap:
+    image: "glance-api"
+    env_file: "/root/configs/envvars"
+    entrypoint: "/bootstrap.sh"
+    volumes:
+      - "/root/configs/glance/glance.conf:/etc/glance/glance.conf"
+      - "/root/configs/admin-openrc:/tmp/admin-openrc"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+    depends_on:
+      - keystone-bootstrap
+  nova-bootstrap:
+    image: "nova-api"
+    env_file: "/root/configs/envvars"
+    entrypoint: "/bootstrap.sh"
+    volumes:
+      - "/root/configs/nova/nova.conf:/etc/nova/nova.conf"
+      - "/root/configs/admin-openrc:/tmp/admin-openrc"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+    depends_on:
+      - keystone-bootstrap
+  neutron-bootstrap:
+    image: "neutron-server"
+    env_file: "/root/configs/envvars"
+    entrypoint: "/bootstrap.sh"
+    volumes:
+      - "/root/configs/neutron/neutron.conf:/etc/neutron/neutron.conf"
+      - "/root/configs/neutron/ml2_conf.ini:/etc/neutron/plugins/ml2/ml2_conf.ini"
+      - "/root/configs/admin-openrc:/tmp/admin-openrc"
+      - "/var/log:/var/log"
+      - "/etc/localtime:/etc/localtime:ro"
+    depends_on:
+      - keystone-bootstrap
