@@ -5,7 +5,6 @@ services:
     privileged: True
     network_mode: "host"
     pid: "host"
-    entrypoint: "libvirtd -v"
     volumes:
       - "/root/configs/nova-compute/qemu.conf:/etc/libvirt/qemu.conf"
       - "/lib/modules:/lib/modules:ro"
@@ -45,4 +44,3 @@ services:
       - "/var/log:/var/log"
       - "/etc/localtime:/etc/localtime:ro"
       - "/lib/modules:/lib/modules:ro"
-      - "/run:/run:shared"

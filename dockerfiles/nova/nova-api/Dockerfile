@@ -1,4 +1,4 @@
-FROM nova-base
+FROM xcloud:5000/nova-base
 
 ENV container docker
 
